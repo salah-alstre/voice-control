@@ -1,0 +1,139 @@
+<infra:WindowBase x:Class="VoiceCommander.App.Views.FloatingAssistantWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:infra="clr-namespace:VoiceCommander.App.Infrastructure"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" ShowInTaskbar="False" ShowActivated="False"
+        SizeToContent="WidthAndHeight" Focusable="False"
+        Topmost="{Binding Topmost}" Opacity="{Binding WindowOpacity}"
+        Title="{Binding Title}">
+    <Window.Resources>
+        <!-- Equalizer bars: only animated while listening (the storyboard is started/stopped from code-behind). -->
+        <Storyboard x:Key="WaveStoryboard" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="W1" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="0.3" To="1" Duration="0:0:0.45" AutoReverse="True"/>
+            <DoubleAnimation Storyboard.TargetName="W2" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="0.8" To="0.25" Duration="0:0:0.38" AutoReverse="True"/>
+            <DoubleAnimation Storyboard.TargetName="W3" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="0.4" To="1" Duration="0:0:0.52" AutoReverse="True"/>
+            <DoubleAnimation Storyboard.TargetName="W4" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="1" To="0.3" Duration="0:0:0.41" AutoReverse="True"/>
+            <DoubleAnimation Storyboard.TargetName="W5" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="0.35" To="0.9" Duration="0:0:0.48" AutoReverse="True"/>
+        </Storyboard>
+        <Style x:Key="WaveBar" TargetType="Rectangle">
+            <Setter Property="Width" Value="3"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="RadiusX" Value="1.5"/>
+            <Setter Property="RadiusY" Value="1.5"/>
+            <Setter Property="Margin" Value="1.5,0"/>
+            <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        </Style>
+        <Style x:Key="MiniIcon" TargetType="Button" BasedOn="{StaticResource IconButton}">
+            <Setter Property="Width" Value="26"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="14" Focusable="False">
+        <!-- ================= Expanded card ================= -->
+        <Border x:Name="Card" Width="340" CornerRadius="12" Padding="14,8,12,14"
+                Background="{DynamicResource BgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                Visibility="{Binding IsCollapsed, Converter={StaticResource BoolToVis}, ConverterParameter=invert}"
+                MouseLeftButtonDown="OnDrag">
+            <Border.Effect><DropShadowEffect BlurRadius="20" ShadowDepth="2" Opacity="0.7" Color="Black"/></Border.Effect>
+            <Border.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{Binding Loc[assistant.alwaysontop]}" IsCheckable="True" IsChecked="{Binding AlwaysOnTop, Mode=OneWay}" Command="{Binding ToggleAlwaysOnTopCommand}"/>
+                    <MenuItem Header="{Binding Loc[assistant.collapse]}" Command="{Binding CollapseCommand}"/>
+                    <MenuItem Header="{Binding Loc[assistant.settings]}" Command="{Binding OpenSettingsCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding Loc[assistant.close]}" Command="{Binding CloseCommand}"/>
+                </ContextMenu>
+            </Border.ContextMenu>
+            <StackPanel>
+                <!-- header -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE720;" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                        <Ellipse Width="7" Height="7" Margin="7,1,0,0" VerticalAlignment="Center" Fill="{Binding StatusBrush, Converter={StaticResource BrushName}}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Style="{StaticResource MiniIcon}" Command="{Binding OpenSettingsCommand}" ToolTip="{Binding SettingsTip}">
+                            <TextBlock Style="{StaticResource Glyph}" Text="&#xE713;" FontSize="12"/>
+                        </Button>
+                        <Button Style="{StaticResource MiniIcon}" Command="{Binding CollapseCommand}" ToolTip="{Binding CollapseTip}">
+                            <TextBlock Style="{StaticResource Glyph}" Text="&#xE738;" FontSize="12"/>
+                        </Button>
+                        <Button Style="{StaticResource MiniIcon}" Command="{Binding CloseCommand}" ToolTip="{Binding CloseTip}">
+                            <TextBlock Style="{StaticResource Glyph}" Text="&#xE711;" FontSize="12"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- main status row -->
+                <Grid Margin="0,12,0,0" MinHeight="44">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Width="38" Height="38" CornerRadius="9" Background="{DynamicResource SurfaceBrush}" VerticalAlignment="Center">
+                        <Grid>
+                            <TextBlock Style="{StaticResource Glyph}" Text="&#xE720;" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="{Binding StatusBrush, Converter={StaticResource BrushName}}"
+                                       Visibility="{Binding HasIcon, Converter={StaticResource BoolToVis}, ConverterParameter=invert}"/>
+                            <Image Width="26" Height="26" Source="{Binding Icon}" RenderOptions.BitmapScalingMode="HighQuality"
+                                   Visibility="{Binding HasIcon, Converter={StaticResource BoolToVis}}"/>
+                        </Grid>
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PrimaryText}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding SecondaryText}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"
+                                   Visibility="{Binding HasSecondary, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                    <!-- waveform -->
+                    <StackPanel x:Name="Wave" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                                Visibility="{Binding IsListening, Converter={StaticResource BoolToVis}}">
+                        <Rectangle x:Name="W1" Style="{StaticResource WaveBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.5"/></Rectangle.RenderTransform></Rectangle>
+                        <Rectangle x:Name="W2" Style="{StaticResource WaveBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.7"/></Rectangle.RenderTransform></Rectangle>
+                        <Rectangle x:Name="W3" Style="{StaticResource WaveBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.9"/></Rectangle.RenderTransform></Rectangle>
+                        <Rectangle x:Name="W4" Style="{StaticResource WaveBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.6"/></Rectangle.RenderTransform></Rectangle>
+                        <Rectangle x:Name="W5" Style="{StaticResource WaveBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.4"/></Rectangle.RenderTransform></Rectangle>
+                    </StackPanel>
+                </Grid>
+
+                <!-- heard line -->
+                <Border Margin="0,12,0,0" Padding="0,10,0,0" BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0"
+                        Visibility="{Binding ShowHeard, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding HeardLine}" FontSize="12.5" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </Border>
+
+                <Button Margin="0,10,0,0" HorizontalAlignment="Left" Focusable="False" Content="{Binding LocateLabel}" Command="{Binding LocateCommand}"
+                        Visibility="{Binding CanLocate, Converter={StaticResource BoolToVis}}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ================= Collapsed pill ================= -->
+        <Border x:Name="Pill" CornerRadius="19" Height="36" Padding="14,0,16,0" Cursor="Hand"
+                Background="{DynamicResource BgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                HorizontalAlignment="Left" VerticalAlignment="Top"
+                Visibility="{Binding IsCollapsed, Converter={StaticResource BoolToVis}}"
+                MouseLeftButtonDown="OnPillDown" MouseLeftButtonUp="OnPillUp" MouseMove="OnPillMove">
+            <Border.Effect><DropShadowEffect BlurRadius="16" ShadowDepth="2" Opacity="0.7" Color="Black"/></Border.Effect>
+            <Border.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{Binding Loc[assistant.expand]}" Command="{Binding ExpandCommand}"/>
+                    <MenuItem Header="{Binding Loc[assistant.alwaysontop]}" IsCheckable="True" IsChecked="{Binding AlwaysOnTop, Mode=OneWay}" Command="{Binding ToggleAlwaysOnTopCommand}"/>
+                    <MenuItem Header="{Binding Loc[assistant.settings]}" Command="{Binding OpenSettingsCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding Loc[assistant.close]}" Command="{Binding CloseCommand}"/>
+                </ContextMenu>
+            </Border.ContextMenu>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" ToolTip="{Binding ExpandTip}">
+                <TextBlock Style="{StaticResource Glyph}" Text="&#xE720;" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                <Ellipse Width="8" Height="8" Margin="8,0,0,0" VerticalAlignment="Center" Fill="{Binding StatusBrush, Converter={StaticResource BrushName}}"/>
+                <TextBlock Text="{Binding PillText}" FontSize="12.5" FontWeight="SemiBold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</infra:WindowBase>

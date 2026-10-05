@@ -1,0 +1,299 @@
+﻿<UserControl x:Class="VoiceCommander.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:inf="clr-namespace:VoiceCommander.App.Infrastructure"
+             xmlns:vm="clr-namespace:VoiceCommander.App.ViewModels">
+    <UserControl.Resources>
+        <Style x:Key="RowLabel" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="Row" TargetType="DockPanel">
+            <Setter Property="Margin" Value="0,10,0,0"/>
+            <Setter Property="LastChildFill" Value="False"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="36,28,36,28" MaxWidth="900" HorizontalAlignment="Stretch">
+            <TextBlock Style="{StaticResource PageTitle}" Text="{inf:Loc set.title}" Margin="0,0,0,20"/>
+
+            <!-- General -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.general}"/>
+                    <DockPanel Style="{StaticResource Row}">
+                        <ComboBox DockPanel.Dock="Right" MinWidth="200" ItemsSource="{Binding Languages}" DisplayMemberPath="Label"
+                                  SelectedItem="{Binding SelectedLanguage}" AutomationProperties.Name="{inf:Loc set.language}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.language}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <ComboBox DockPanel.Dock="Right" MinWidth="200" ItemsSource="{Binding Themes}" DisplayMemberPath="Label"
+                                  SelectedItem="{Binding SelectedTheme}" AutomationProperties.Name="{inf:Loc set.theme}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.theme}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding StartWithWindows}"
+                                  AutomationProperties.Name="{inf:Loc set.startup}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.startup}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding StartMinimized}"
+                                  AutomationProperties.Name="{inf:Loc set.starttray}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.starttray}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding CloseToTray}"
+                                  AutomationProperties.Name="{inf:Loc set.closetotray}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.closetotray}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ShowNotifications}"
+                                  AutomationProperties.Name="{inf:Loc set.notifications}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.notifications}"/>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Listening -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.listening}"/>
+                    <DockPanel Style="{StaticResource Row}">
+                        <ComboBox DockPanel.Dock="Right" MinWidth="200" ItemsSource="{Binding Modes}" DisplayMemberPath="Label"
+                                  SelectedItem="{Binding SelectedMode}" AutomationProperties.Name="{inf:Loc set.mode}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.mode}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ResumeListening}"
+                                  AutomationProperties.Name="{inf:Loc set.resume}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.resume}"/>
+                    </DockPanel>
+
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding WakeEnabled}"
+                                  AutomationProperties.Name="{inf:Loc set.wake}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.wake}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}" IsEnabled="{Binding WakeEnabled}">
+                        <TextBox DockPanel.Dock="Right" Width="200" Text="{Binding WakePhrase, UpdateSourceTrigger=LostFocus}"
+                                 AutomationProperties.Name="{inf:Loc set.wake.phrase}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.wake.phrase}"/>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" Text="{inf:Loc set.wake.hint}"/>
+
+                    <DockPanel Style="{StaticResource Row}" Margin="0,18,0,0">
+                        <TextBlock DockPanel.Dock="Right" Width="64" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding ConfidenceText}"/>
+                        <Slider DockPanel.Dock="Right" Width="200" Minimum="0.2" Maximum="0.95" SmallChange="0.05" LargeChange="0.1"
+                                VerticalAlignment="Center" Value="{Binding Confidence, Delay=250}"
+                                AutomationProperties.Name="{inf:Loc set.confidence}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.confidence}"/>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" Text="{inf:Loc set.confidence.hint}"/>
+
+                    <DockPanel Style="{StaticResource Row}" Margin="0,18,0,0">
+                        <TextBlock DockPanel.Dock="Right" Width="64" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding CooldownText}"/>
+                        <Slider DockPanel.Dock="Right" Width="200" Minimum="0" Maximum="5000" SmallChange="100" LargeChange="500"
+                                VerticalAlignment="Center" Value="{Binding Cooldown, Delay=250}"
+                                AutomationProperties.Name="{inf:Loc set.cooldown}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.cooldown}"/>
+                    </DockPanel>
+
+                    <DockPanel Style="{StaticResource Row}" Margin="0,18,0,0">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AllowSimilarity}"
+                                  AutomationProperties.Name="{inf:Loc set.similarity}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.similarity}"/>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" Text="{inf:Loc set.similarity.hint}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Hotkeys -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.hotkeys}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" Text="{inf:Loc set.hotkey.hint}"/>
+                    <ItemsControl ItemsSource="{Binding Hotkeys}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:HotkeyRowViewModel}">
+                                <Grid Margin="0,12,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Label}"/>
+                                        <TextBlock FontSize="12" Margin="0,2,0,0" TextWrapping="Wrap" Text="{Binding Status}"
+                                                   Foreground="{Binding StatusBrush, Converter={StaticResource BrushName}}"/>
+                                    </StackPanel>
+                                    <inf:HotkeyBox Grid.Column="1" Width="200" TextAlignment="Center" FlowDirection="LeftToRight"
+                                                   Style="{StaticResource {x:Type TextBox}}" VerticalAlignment="Center"
+                                                   Hotkey="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                   AutomationProperties.Name="{Binding Label}"
+                                                   ToolTip="{inf:Loc set.hotkey.record}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Push-to-Talk sounds -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc ptt.title}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" Text="{inf:Loc ptt.desc}"/>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding PttSoundsEnabled}"
+                                  AutomationProperties.Name="{inf:Loc ptt.enable}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc ptt.enable}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}" Margin="0,16,0,0" IsEnabled="{Binding PttSoundsEnabled}">
+                        <TextBlock DockPanel.Dock="Right" Width="64" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding PttVolumeText}"/>
+                        <Slider DockPanel.Dock="Right" Width="200" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1"
+                                VerticalAlignment="Center" Value="{Binding PttSoundVolume}"
+                                AutomationProperties.Name="{inf:Loc ptt.volume}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc ptt.volume}"/>
+                    </DockPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Content="{inf:Loc ptt.test.start}"
+                                Command="{Binding TestStartSoundCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="8,0,0,0" Content="{inf:Loc ptt.test.stop}"
+                                Command="{Binding TestStopSoundCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Floating assistant -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc fa.title}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" Text="{inf:Loc fa.desc}"/>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AssistantEnabled}"
+                                  AutomationProperties.Name="{inf:Loc fa.enable}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.enable}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AssistantAlwaysOnTop}"
+                                  AutomationProperties.Name="{inf:Loc fa.ontop}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.ontop}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AssistantStartWithApp}"
+                                  AutomationProperties.Name="{inf:Loc fa.startup}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.startup}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AssistantShowRecognizedText}"
+                                  AutomationProperties.Name="{inf:Loc fa.heard}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.heard}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AssistantShowExecutionStatus}"
+                                  AutomationProperties.Name="{inf:Loc fa.exec}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.exec}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AssistantAutoCollapse}"
+                                  AutomationProperties.Name="{inf:Loc fa.autocollapse}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.autocollapse}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AssistantHideWhenIdle}"
+                                  AutomationProperties.Name="{inf:Loc fa.hide}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.hide}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}" Margin="0,16,0,0" IsEnabled="{Binding AssistantHideWhenIdle}">
+                        <TextBlock DockPanel.Dock="Right" Width="64" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding AssistantHideAfterText}"/>
+                        <Slider DockPanel.Dock="Right" Width="200" Minimum="2" Maximum="120" SmallChange="1" LargeChange="10"
+                                VerticalAlignment="Center" Value="{Binding AssistantHideAfterSeconds, Delay=250}"
+                                AutomationProperties.Name="{inf:Loc fa.hide.after}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.hide.after}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}" Margin="0,16,0,0">
+                        <TextBlock DockPanel.Dock="Right" Width="64" TextAlignment="Right" VerticalAlignment="Center" Text="{Binding AssistantOpacityText}"/>
+                        <Slider DockPanel.Dock="Right" Width="200" Minimum="0.3" Maximum="1" SmallChange="0.05" LargeChange="0.1"
+                                VerticalAlignment="Center" Value="{Binding AssistantOpacity, Delay=150}"
+                                AutomationProperties.Name="{inf:Loc fa.opacity}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc fa.opacity}"/>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,10,0,0" Text="{inf:Loc fa.position}"/>
+                    <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="0,14,0,0" HorizontalAlignment="Left"
+                            Content="{inf:Loc assistant.open}" Command="{Binding OpenAssistantCommand}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Screenshots -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.screenshots}"/>
+                    <TextBlock Style="{StaticResource RowLabel}" Margin="0,10,0,0" Text="{inf:Loc set.screenshot.folder}"/>
+                    <DockPanel Margin="0,6,0,0">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Padding="14,6" Margin="8,0,0,0"
+                                Content="{inf:Loc common.reset}" Command="{Binding ResetScreenshotFolderCommand}"/>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Padding="14,6"
+                                Content="{inf:Loc common.browse}" Command="{Binding BrowseScreenshotFolderCommand}"/>
+                        <TextBox IsReadOnly="True" Text="{Binding ScreenshotFolder, Mode=OneWay}" FlowDirection="LeftToRight"
+                                 Margin="0,0,8,0" AutomationProperties.Name="{inf:Loc set.screenshot.folder}"/>
+                    </DockPanel>
+                    <DockPanel Style="{StaticResource Row}">
+                        <ComboBox DockPanel.Dock="Right" MinWidth="200" ItemsSource="{Binding Formats}" DisplayMemberPath="Label"
+                                  SelectedItem="{Binding SelectedFormat}" AutomationProperties.Name="{inf:Loc set.screenshot.format}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.screenshot.format}"/>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Safety -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.safety}"/>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AllowPower}"
+                                  AutomationProperties.Name="{inf:Loc set.dangerous}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.dangerous}"/>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" Text="{inf:Loc set.dangerous.hint}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Data -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.data}"/>
+                    <WrapPanel Margin="0,12,0,0">
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="0,0,8,8" Content="{inf:Loc set.export}" Command="{Binding ExportCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="0,0,8,8" Content="{inf:Loc set.import}" Command="{Binding ImportCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="0,0,8,8" Content="{inf:Loc set.openfolder}" Command="{Binding OpenDataFolderCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="0,0,8,8" Content="{inf:Loc set.openlogs}" Command="{Binding OpenLogsFolderCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="0,0,8,8" Content="{inf:Loc set.rerun.onboarding}" Command="{Binding RunSetupGuideCommand}"/>
+                        <Button Style="{StaticResource DangerButton}" Padding="14,6" Margin="0,0,8,8" Content="{inf:Loc set.reset}" Command="{Binding ResetCommand}"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Developer -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.developer}"/>
+                    <DockPanel Style="{StaticResource Row}">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding DeveloperMode}"
+                                  AutomationProperties.Name="{inf:Loc set.developer}"/>
+                        <TextBlock Style="{StaticResource RowLabel}" Text="{inf:Loc set.developer.hint}"/>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- About -->
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc set.about}"/>
+                    <TextBlock Margin="0,10,0,0" FontWeight="SemiBold" Text="{Binding VersionText}"/>
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0" TextWrapping="Wrap" Text="{inf:Loc set.about.text}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
+

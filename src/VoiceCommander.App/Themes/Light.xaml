@@ -1,0 +1,52 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="BgColor">#FFF3F5F9</Color>
+    <Color x:Key="SidebarColor">#FFE9EDF4</Color>
+    <Color x:Key="SurfaceColor">#FFFFFFFF</Color>
+    <Color x:Key="Surface2Color">#FFEEF1F7</Color>
+    <Color x:Key="BorderColor">#FFD5DAE5</Color>
+    <Color x:Key="TextColor">#FF1A1D24</Color>
+    <Color x:Key="TextSecondaryColor">#FF4B5563</Color>
+    <Color x:Key="TextMutedColor">#FF5E6778</Color>
+    <Color x:Key="AccentColor">#FF2F66E8</Color>
+    <Color x:Key="AccentHoverColor">#FF4B7BF0</Color>
+    <Color x:Key="AccentTextColor">#FFFFFFFF</Color>
+    <Color x:Key="SuccessColor">#FF16A05F</Color>
+    <Color x:Key="WarningColor">#FFC27A00</Color>
+    <Color x:Key="DangerColor">#FFD93B3B</Color>
+    <Color x:Key="HoverColor">#FFE3E8F1</Color>
+    <Color x:Key="AccentSoftColor">#202F66E8</Color>
+    <Color x:Key="SuccessSoftColor">#2216A05F</Color>
+    <Color x:Key="WarningSoftColor">#22C27A00</Color>
+    <Color x:Key="DangerSoftColor">#22D93B3B</Color>
+    <Color x:Key="PressedColor">#FFD8DEEA</Color>
+    <Color x:Key="SubtleBorderColor">#FFE3E7EF</Color>
+    <Color x:Key="OverlayColor">#66000000</Color>
+    <Color x:Key="AccentPressedColor">#FF2557CC</Color>
+    <Color x:Key="DangerHoverColor">#FFE35B5B</Color>
+
+    <SolidColorBrush x:Key="BgBrush" Color="{StaticResource BgColor}"/>
+    <SolidColorBrush x:Key="SidebarBrush" Color="{StaticResource SidebarColor}"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}"/>
+    <SolidColorBrush x:Key="Surface2Brush" Color="{StaticResource Surface2Color}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}"/>
+    <SolidColorBrush x:Key="AccentTextBrush" Color="{StaticResource AccentTextColor}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}"/>
+    <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="{StaticResource AccentSoftColor}"/>
+    <SolidColorBrush x:Key="SuccessSoftBrush" Color="{StaticResource SuccessSoftColor}"/>
+    <SolidColorBrush x:Key="WarningSoftBrush" Color="{StaticResource WarningSoftColor}"/>
+    <SolidColorBrush x:Key="DangerSoftBrush" Color="{StaticResource DangerSoftColor}"/>
+    <SolidColorBrush x:Key="PressedBrush" Color="{StaticResource PressedColor}"/>
+    <SolidColorBrush x:Key="SubtleBorderBrush" Color="{StaticResource SubtleBorderColor}"/>
+    <SolidColorBrush x:Key="OverlayBrush" Color="{StaticResource OverlayColor}"/>
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressedColor}"/>
+    <SolidColorBrush x:Key="DangerHoverBrush" Color="{StaticResource DangerHoverColor}"/>
+</ResourceDictionary>

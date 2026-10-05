@@ -1,0 +1,268 @@
+﻿<UserControl x:Class="VoiceCommander.App.Views.MicrophoneView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:inf="clr-namespace:VoiceCommander.App.Infrastructure"
+             xmlns:vm="clr-namespace:VoiceCommander.App.ViewModels">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type vm:EngineRowViewModel}">
+            <Grid Margin="0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Width="9" Height="9" Margin="0,0,10,0" VerticalAlignment="Center"
+                         Fill="{Binding Brush, Converter={StaticResource BrushName}}"/>
+                <StackPanel Grid.Column="1">
+                    <TextBlock FontWeight="SemiBold">
+                        <Run Text="{Binding Language, Mode=OneWay}"/><Run Text=" · "/><Run Text="{Binding Status, Mode=OneWay}"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Detail}" Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap"
+                               Visibility="{Binding HasDetail, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ModelItemViewModel}">
+            <Border Style="{StaticResource HoverRow}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                        <TextBlock Style="{StaticResource Muted}" FontSize="12" Margin="0,3,0,0">
+                            <Run Text="{Binding LanguageText, Mode=OneWay}"/><Run Text="  ·  "/><Run Text="{Binding SizeText, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock Text="{Binding StatusText}" FontSize="12" Margin="0,3,0,0"
+                                   Foreground="{Binding StatusBrush, Converter={StaticResource BrushName}}"/>
+                        <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress, Mode=OneWay}" Margin="0,8,0,0"
+                                     Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                        <Button Style="{StaticResource PrimaryButton}" Content="{inf:Loc model.download}" Padding="14,6"
+                                Command="{Binding DownloadCommand}"
+                                Visibility="{Binding CanDownload, Converter={StaticResource BoolToVis}}"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{inf:Loc model.cancel}" Padding="14,6"
+                                Command="{Binding CancelCommand}"
+                                Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVis}}"/>
+                        <Button Style="{StaticResource DangerButton}" Content="{inf:Loc model.remove}" Padding="14,6"
+                                Command="{Binding RemoveCommand}"
+                                Visibility="{Binding CanRemove, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:WhisperModelItemViewModel}">
+            <Border Style="{StaticResource HoverRow}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding SizeText}" Style="{StaticResource Muted}" FontSize="12" Margin="0,3,0,0"/>
+                        <TextBlock Text="{Binding StatusText}" FontSize="12" Margin="0,3,0,0"
+                                   Foreground="{Binding StatusBrush, Converter={StaticResource BrushName}}"/>
+                        <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress, Mode=OneWay}" Margin="0,8,0,0"
+                                     Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                        <Button Style="{StaticResource PrimaryButton}" Content="{inf:Loc model.download}" Padding="14,6"
+                                Command="{Binding DownloadCommand}"
+                                Visibility="{Binding CanDownload, Converter={StaticResource BoolToVis}}"/>
+                        <Button Style="{StaticResource PrimaryButton}" Content="{inf:Loc whisper.use}" Padding="14,6"
+                                Command="{Binding UseCommand}"
+                                Visibility="{Binding CanUse, Converter={StaticResource BoolToVis}}"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{inf:Loc model.cancel}" Padding="14,6" Margin="0,6,0,0"
+                                Command="{Binding CancelCommand}"
+                                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{inf:Loc whisper.validate}" Padding="14,6" Margin="0,6,0,0"
+                                Command="{Binding ValidateCommand}"
+                                Visibility="{Binding CanValidate, Converter={StaticResource BoolToVis}}"/>
+                        <Button Style="{StaticResource DangerButton}" Content="{inf:Loc model.remove}" Padding="14,6" Margin="0,6,0,0"
+                                Command="{Binding RemoveCommand}"
+                                Visibility="{Binding CanRemove, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="36,28,36,28" MaxWidth="900" HorizontalAlignment="Stretch">
+            <TextBlock Style="{StaticResource PageTitle}" Text="{inf:Loc mic.title}"/>
+            <TextBlock Style="{StaticResource Muted}" Text="{inf:Loc mic.subtitle}" Margin="0,4,0,22" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{Binding Message}" Foreground="{DynamicResource WarningBrush}" TextWrapping="Wrap" Margin="0,0,0,12"
+                       Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}"/>
+
+            <!-- Profile / model mismatch: shown, never silently overridden -->
+            <Border Background="{DynamicResource WarningSoftBrush}" CornerRadius="{StaticResource RadiusSmall}" Padding="14,10" Margin="0,0,0,18"
+                    Visibility="{Binding HasMismatch, Converter={StaticResource BoolToVis}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE7BA;" Foreground="{DynamicResource WarningBrush}" FontSize="15"
+                               VerticalAlignment="Top" Margin="0,2,10,0"/>
+                    <TextBlock Text="{Binding MismatchText}" TextWrapping="Wrap" MaxWidth="780" FontSize="12.5"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Whisper model missing: install it or fall back to Vosk -->
+            <Border Background="{DynamicResource WarningSoftBrush}" CornerRadius="{StaticResource RadiusSmall}" Padding="14,10" Margin="0,0,0,18"
+                    Visibility="{Binding ShowWhisperRequired, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="{inf:Loc whisper.required}" TextWrapping="Wrap" FontSize="12.5" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Style="{StaticResource PrimaryButton}" Content="{inf:Loc whisper.install}" Padding="14,6" Margin="0,0,10,0"
+                                Command="{Binding InstallWhisperCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{inf:Loc whisper.usevosk}" Padding="14,6"
+                                Command="{Binding UseVoskInsteadCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Whisper model failed to load: repair or choose another -->
+            <Border Background="{DynamicResource WarningSoftBrush}" CornerRadius="{StaticResource RadiusSmall}" Padding="14,10" Margin="0,0,0,18"
+                    Visibility="{Binding ShowWhisperFailed, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="{inf:Loc whisper.loadfailed}" TextWrapping="Wrap" FontSize="12.5" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding WhisperFailedDetail}" TextWrapping="Wrap" FontSize="12" Style="{StaticResource Muted}" Margin="0,4,0,0"
+                               Visibility="{Binding HasWhisperFailedDetail, Converter={StaticResource BoolToVis}}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Style="{StaticResource PrimaryButton}" Content="{inf:Loc whisper.repair}" Padding="14,6" Margin="0,0,10,0"
+                                Command="{Binding RepairWhisperCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{inf:Loc whisper.choosemodel}" Padding="14,6"
+                                Command="{Binding ChooseWhisperModelCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- LIVE INPUT LEVEL -->
+            <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc mic.live}"/>
+            <Border x:Name="MeterTrack" Height="14" CornerRadius="7" Margin="0,10,0,0" Background="{DynamicResource Surface2Brush}" ClipToBounds="True">
+                <Border HorizontalAlignment="Left" CornerRadius="7" Background="{DynamicResource AccentBrush}">
+                    <Border.Width>
+                        <MultiBinding Converter="{StaticResource LevelToWidth}">
+                            <Binding Path="Level"/>
+                            <Binding Path="ActualWidth" ElementName="MeterTrack"/>
+                        </MultiBinding>
+                    </Border.Width>
+                </Border>
+            </Border>
+            <DockPanel Margin="0,12,0,0">
+                <Button DockPanel.Dock="Left" Style="{StaticResource PrimaryButton}" Content="{Binding TestText}"
+                        Padding="16,7" Command="{Binding ToggleTestCommand}"/>
+                <TextBlock Text="{inf:Loc mic.test.hint}" Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap"
+                           VerticalAlignment="Center" Margin="14,0,0,0"/>
+            </DockPanel>
+
+            <!-- At-a-glance summary -->
+            <Grid Margin="0,22,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Style="{StaticResource Caption}" Text="{inf:Loc mic.sum.mic}"/>
+                    <TextBlock Text="{Binding SummaryMic}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                    <TextBlock Style="{StaticResource Caption}" Text="{inf:Loc mic.sum.lang}"/>
+                    <TextBlock Text="{Binding SummaryProfile}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="0,0,12,0">
+                    <TextBlock Style="{StaticResource Caption}" Text="{inf:Loc mic.sum.engine}"/>
+                    <TextBlock Text="{Binding SummaryEngine}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="3">
+                    <TextBlock Style="{StaticResource Caption}" Text="{inf:Loc mic.sum.ptt}"/>
+                    <TextBlock Text="{Binding SummaryPtt}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Input device -->
+            <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc mic.device}" Margin="0,32,0,10"/>
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="{inf:Loc mic.refresh}"
+                            Padding="14,6" Margin="10,0,0,0" Command="{Binding RefreshDeviceListCommand}"/>
+                    <ComboBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}"
+                              DisplayMemberPath="Label" AutomationProperties.Name="{inf:Loc mic.device}"/>
+                </DockPanel>
+            </Border>
+
+            <!-- Recognition engine and profile -->
+            <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc mic.speech.title}" Margin="0,32,0,10"/>
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,16,0,0">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Text="{inf:Loc mic.speech.profile}" Style="{StaticResource Caption}" Margin="0,0,0,6"/>
+                            <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}"
+                                      DisplayMemberPath="Label" AutomationProperties.Name="{inf:Loc mic.speech.profile}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,8,0">
+                            <TextBlock Text="{inf:Loc mic.speech.engine.en}" Style="{StaticResource Caption}" Margin="0,0,0,6"/>
+                            <ComboBox ItemsSource="{Binding EngineChoices}" SelectedItem="{Binding SelectedEnglishEngine}"
+                                      DisplayMemberPath="Label" AutomationProperties.Name="{inf:Loc mic.speech.engine.en}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="8,0,0,0">
+                            <TextBlock Text="{inf:Loc mic.speech.engine.ar}" Style="{StaticResource Caption}" Margin="0,0,0,6"/>
+                            <ComboBox ItemsSource="{Binding EngineChoices}" SelectedItem="{Binding SelectedArabicEngine}"
+                                      DisplayMemberPath="Label" AutomationProperties.Name="{inf:Loc mic.speech.engine.ar}"/>
+                        </StackPanel>
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Engines}" Margin="0,16,0,0" Focusable="False"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Whisper models (Arabic) -->
+            <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc whisper.title}" Margin="0,32,0,10"/>
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,14,0,0">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Muted}" Text="{inf:Loc whisper.hint}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    <TextBlock Style="{StaticResource Muted}" Text="{Binding WhisperLocation}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                    <TextBlock Text="{Binding CustomModelText}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10"
+                               Foreground="{DynamicResource WarningBrush}"
+                               Visibility="{Binding HasCustomModel, Converter={StaticResource BoolToVis}}"/>
+                    <ItemsControl ItemsSource="{Binding WhisperModels}" Focusable="False"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <Button Style="{StaticResource GhostButton}" Content="{inf:Loc whisper.choose}" Padding="14,6" Margin="0,0,10,0"
+                                Command="{Binding ChooseWhisperModelCommand}"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{inf:Loc whisper.usecatalog}" Padding="14,6"
+                                Command="{Binding UseDownloadedWhisperCommand}"
+                                Visibility="{Binding HasCustomModel, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Offline models -->
+            <TextBlock Style="{StaticResource Overline}" Text="{inf:Loc model.title}" Margin="0,32,0,10"/>
+            <Border BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="0,14,0,0">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Muted}" Text="{inf:Loc model.hint}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                    <ItemsControl ItemsSource="{Binding Models}" Focusable="False"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6" Margin="0,0,10,0"
+                                Command="{Binding UseFolderCommand}" CommandParameter="en">
+                            <TextBlock><Run Text="{inf:Loc model.usefolder}"/><Run Text="  (EN)"/></TextBlock>
+                        </Button>
+                        <Button Style="{StaticResource GhostButton}" Padding="14,6"
+                                Command="{Binding UseFolderCommand}" CommandParameter="ar">
+                            <TextBlock><Run Text="{inf:Loc model.usefolder}"/><Run Text="  (AR)"/></TextBlock>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

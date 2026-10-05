@@ -1,0 +1,25 @@
+<infra:WindowBase x:Class="VoiceCommander.App.Dialogs.ConfirmDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:infra="clr-namespace:VoiceCommander.App.Infrastructure"
+        Width="460" SizeToContent="Height" WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" ShowInTaskbar="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="28,26,28,24">
+            <TextBlock x:Name="TitleText" Style="{StaticResource Heading}" TextWrapping="Wrap"/>
+            <TextBlock x:Name="MessageText" Style="{StaticResource Muted}" Margin="0,10,0,0" TextWrapping="Wrap" LineHeight="20"/>
+        </StackPanel>
+        <Border Grid.Row="1" Background="{DynamicResource SidebarBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}"
+                BorderThickness="0,1,0,0" Padding="28,14">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="NoButton" Style="{StaticResource GhostButton}" Margin="0,0,8,0" MinWidth="88" IsCancel="True" Click="OnNo"/>
+                <Button x:Name="AltButton" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" MinWidth="88" Visibility="Collapsed" Click="OnAlt"/>
+                <Button x:Name="YesButton" MinWidth="96" IsDefault="True" Click="OnYes"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</infra:WindowBase>
